@@ -166,6 +166,6 @@ const Player = () => {
   )
 }
 
-export const Route = createFileRoute('/player/')({
+export const Route = createFileRoute('/player/player')({
   component: Player,
 })
