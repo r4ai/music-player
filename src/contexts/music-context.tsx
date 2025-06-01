@@ -1,5 +1,15 @@
-import { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react'
-import { WebAudioManager, AudioStateListener } from '../lib/web-audio-manager'
+import {
+  type ReactNode,
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react"
+import {
+  type AudioStateListener,
+  WebAudioManager,
+} from "../lib/web-audio-manager"
 
 interface MusicFile {
   file: File
@@ -29,7 +39,7 @@ const MusicContext = createContext<MusicContextType | undefined>(undefined)
 export const useMusicContext = () => {
   const context = useContext(MusicContext)
   if (context === undefined) {
-    throw new Error('useMusicContext must be used within a MusicProvider')
+    throw new Error("useMusicContext must be used within a MusicProvider")
   }
   return context
 }
@@ -46,14 +56,14 @@ export const MusicProvider = ({ children }: MusicProviderProps) => {
   const [volume, setVolumeState] = useState(1)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
+
   const audioManagerRef = useRef<WebAudioManager | null>(null)
 
   // Initialize Web Audio Manager
   useEffect(() => {
     try {
       audioManagerRef.current = new WebAudioManager()
-      
+
       const listener: AudioStateListener = {
         onStateChange: (state) => {
           setIsPlaying(state.isPlaying)
@@ -71,11 +81,11 @@ export const MusicProvider = ({ children }: MusicProviderProps) => {
         onError: (err) => {
           setError(err.message)
           setIsLoading(false)
-        }
+        },
       }
-      
+
       audioManagerRef.current.addListener(listener)
-      
+
       return () => {
         if (audioManagerRef.current) {
           audioManagerRef.current.removeListener(listener)
@@ -83,14 +93,15 @@ export const MusicProvider = ({ children }: MusicProviderProps) => {
         }
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to initialize audio'
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to initialize audio"
       setError(errorMessage)
     }
   }, [])
 
   const setCurrentMusic = async (music: MusicFile | null) => {
     setError(null)
-    
+
     if (!music) {
       setCurrentMusicState(null)
       if (audioManagerRef.current) {
@@ -102,13 +113,14 @@ export const MusicProvider = ({ children }: MusicProviderProps) => {
     try {
       setIsLoading(true)
       setCurrentMusicState(music)
-      
+
       if (audioManagerRef.current) {
         await audioManagerRef.current.loadAudio(music.file)
         setDuration(audioManagerRef.current.getDuration())
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to load audio'
+      const errorMessage =
+        err instanceof Error ? err.message : "Failed to load audio"
       setError(errorMessage)
     } finally {
       setIsLoading(false)
@@ -125,7 +137,8 @@ export const MusicProvider = ({ children }: MusicProviderProps) => {
         await audioManagerRef.current.play()
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Playback failed'
+      const errorMessage =
+        err instanceof Error ? err.message : "Playback failed"
       setError(errorMessage)
     }
   }
@@ -166,9 +179,5 @@ export const MusicProvider = ({ children }: MusicProviderProps) => {
     getWaveformData,
   }
 
-  return (
-    <MusicContext.Provider value={value}>
-      {children}
-    </MusicContext.Provider>
-  )
+  return <MusicContext.Provider value={value}>{children}</MusicContext.Provider>
 }

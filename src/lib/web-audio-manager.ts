@@ -18,11 +18,11 @@ export class WebAudioManager {
   private sourceNode: AudioBufferSourceNode | null = null
   private gainNode: GainNode | null = null
   private analyserNode: AnalyserNode | null = null
-  
-  private startTime: number = 0
-  private pauseTime: number = 0
-  private isPlaying: boolean = false
-  private volume: number = 1
+
+  private startTime = 0
+  private pauseTime = 0
+  private isPlaying = false
+  private volume = 1
   private listeners: AudioStateListener[] = []
   private animationFrameId: number | null = null
 
@@ -32,17 +32,19 @@ export class WebAudioManager {
 
   private initializeAudioContext = () => {
     try {
-      this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)()
+      this.audioContext =
+        new // biome-ignore lint/suspicious/noExplicitAny: todo
+        (window.AudioContext || (window as any).webkitAudioContext)()
       this.gainNode = this.audioContext.createGain()
       this.analyserNode = this.audioContext.createAnalyser()
-      
+
       this.gainNode.connect(this.analyserNode)
       this.analyserNode.connect(this.audioContext.destination)
-      
+
       this.gainNode.gain.value = this.volume
     } catch (error) {
-      console.error('Failed to initialize AudioContext:', error)
-      throw new Error('Web Audio API is not supported in this browser')
+      console.error("Failed to initialize AudioContext:", error)
+      throw new Error("Web Audio API is not supported in this browser")
     }
   }
 
@@ -62,37 +64,39 @@ export class WebAudioManager {
       isPlaying: this.isPlaying,
       currentTime: this.getCurrentTime(),
       duration: this.getDuration(),
-      volume: this.volume
+      volume: this.volume,
     }
-    
-    this.listeners.forEach(listener => {
+
+    for (const listener of this.listeners) {
       listener.onStateChange(state)
-    })
+    }
   }
 
   private notifyTimeUpdate = () => {
     const currentTime = this.getCurrentTime()
-    this.listeners.forEach(listener => {
+    for (const listener of this.listeners) {
       listener.onTimeUpdate(currentTime)
-    })
+    }
   }
 
   private startTimeTracking = () => {
     const updateTime = () => {
       if (this.isPlaying) {
         this.notifyTimeUpdate()
-        
+
         // Check if audio has ended
         if (this.getCurrentTime() >= this.getDuration()) {
           this.stop()
-          this.listeners.forEach(listener => listener.onEnded())
+          for (const listener of this.listeners) {
+            listener.onEnded()
+          }
           return
         }
-        
+
         this.animationFrameId = requestAnimationFrame(updateTime)
       }
     }
-    
+
     this.animationFrameId = requestAnimationFrame(updateTime)
   }
 
@@ -105,7 +109,7 @@ export class WebAudioManager {
 
   public async loadAudio(file: File): Promise<void> {
     if (!this.audioContext) {
-      throw new Error('AudioContext is not initialized')
+      throw new Error("AudioContext is not initialized")
     }
 
     try {
@@ -114,15 +118,18 @@ export class WebAudioManager {
       this.pauseTime = 0
       this.notifyStateChange()
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred"
       const audioError = new Error(`Failed to load audio: ${errorMessage}`)
-      this.listeners.forEach(listener => listener.onError(audioError))
+      for (const listener of this.listeners) {
+        listener.onError(audioError)
+      }
       throw audioError
     }
   }
   public play = async () => {
     if (!this.audioContext || !this.audioBuffer) {
-      throw new Error('Audio is not loaded')
+      throw new Error("Audio is not loaded")
     }
 
     // If already playing, do nothing
@@ -131,7 +138,7 @@ export class WebAudioManager {
     }
 
     // Resume AudioContext if suspended (required for user interaction)
-    if (this.audioContext.state === 'suspended') {
+    if (this.audioContext.state === "suspended") {
       await this.audioContext.resume()
     }
 
@@ -145,13 +152,16 @@ export class WebAudioManager {
     // Create new source node
     this.sourceNode = this.audioContext.createBufferSource()
     this.sourceNode.buffer = this.audioBuffer
+    // biome-ignore lint/style/noNonNullAssertion: todo
     this.sourceNode.connect(this.gainNode!)
 
     // Set up event handlers
     this.sourceNode.onended = () => {
       if (this.isPlaying) {
         this.stop()
-        this.listeners.forEach(listener => listener.onEnded())
+        for (const listener of this.listeners) {
+          listener.onEnded()
+        }
       }
     }
 
@@ -159,7 +169,7 @@ export class WebAudioManager {
     this.sourceNode.start(0, this.pauseTime)
     this.startTime = this.audioContext.currentTime - this.pauseTime
     this.isPlaying = true
-    
+
     this.startTimeTracking()
     this.notifyStateChange()
   }
@@ -170,7 +180,7 @@ export class WebAudioManager {
       this.sourceNode.stop()
       this.sourceNode = null
       this.isPlaying = false
-      
+
       this.stopTimeTracking()
       this.notifyStateChange()
     }
@@ -181,11 +191,11 @@ export class WebAudioManager {
       this.sourceNode.stop()
       this.sourceNode = null
     }
-    
+
     this.isPlaying = false
     this.pauseTime = 0
     this.startTime = 0
-    
+
     this.stopTimeTracking()
     this.notifyStateChange()
   }
@@ -193,7 +203,7 @@ export class WebAudioManager {
   public seekTo = (time: number) => {
     const wasPlaying = this.isPlaying
     this.pauseTime = Math.max(0, Math.min(time, this.getDuration()))
-    
+
     if (wasPlaying) {
       this.pause()
       this.play()
@@ -204,23 +214,23 @@ export class WebAudioManager {
 
   public setVolume = (volume: number) => {
     this.volume = Math.max(0, Math.min(1, volume))
-    
+
     if (this.gainNode) {
       // Use exponential ramping for smoother volume changes
       const currentTime = this.audioContext?.currentTime || 0
       this.gainNode.gain.setTargetAtTime(this.volume, currentTime, 0.1)
     }
-    
+
     this.notifyStateChange()
   }
 
   public getCurrentTime = (): number => {
     if (!this.audioContext) return 0
-    
+
     if (this.isPlaying && this.sourceNode) {
       return this.audioContext.currentTime - this.startTime
     }
-    
+
     return this.pauseTime
   }
 
@@ -240,7 +250,7 @@ export class WebAudioManager {
     if (!this.analyserNode) {
       return new Uint8Array(0)
     }
-    
+
     const dataArray = new Uint8Array(this.analyserNode.frequencyBinCount)
     this.analyserNode.getByteFrequencyData(dataArray)
     return dataArray
@@ -250,7 +260,7 @@ export class WebAudioManager {
     if (!this.analyserNode) {
       return new Uint8Array(0)
     }
-    
+
     const dataArray = new Uint8Array(this.analyserNode.frequencyBinCount)
     this.analyserNode.getByteTimeDomainData(dataArray)
     return dataArray
@@ -259,12 +269,12 @@ export class WebAudioManager {
   public dispose = () => {
     this.stop()
     this.stopTimeTracking()
-    
+
     if (this.audioContext) {
       this.audioContext.close()
       this.audioContext = null
     }
-    
+
     this.audioBuffer = null
     this.gainNode = null
     this.analyserNode = null

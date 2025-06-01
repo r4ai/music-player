@@ -3,29 +3,34 @@
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true,
+    "useIgnoreFile": true
   },
   "files": {
     "ignoreUnknown": true,
-    "ignore": [],
+    "ignore": [
+      "src/routeTree.gen.ts",
+      "dist",
+      "node_modules",
+      "src-tauri/target"
+    ]
   },
   "formatter": {
     "enabled": true,
-    "indentStyle": "space",
+    "indentStyle": "space"
   },
   "organizeImports": {
-    "enabled": true,
+    "enabled": true
   },
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-    },
+      "recommended": true
+    }
   },
   "javascript": {
     "formatter": {
       "quoteStyle": "double",
-      "semicolons": "asNeeded",
-    },
-  },
+      "semicolons": "asNeeded"
+    }
+  }
 }

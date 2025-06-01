@@ -1,49 +1,55 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useState, useCallback } from 'react'
-import { Card, CardContent } from '../components/ui/card'
-import { useMusicContext } from '../contexts/music-context'
-import { Upload, Music } from 'lucide-react'
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { Music, Upload } from "lucide-react"
+import { useCallback, useState } from "react"
+import { Card, CardContent } from "../components/ui/card"
+import { useMusicContext } from "../contexts/music-context"
 
 const Home = () => {
   const [isDragOver, setIsDragOver] = useState(false)
   const { setCurrentMusic } = useMusicContext()
   const navigate = useNavigate()
 
-  const handleFile = useCallback(async (file: File) => {
-    if (!file.type.startsWith('audio/')) {
-      alert('音楽ファイルを選択してください')
-      return
-    }
-
-    try {
-      const url = URL.createObjectURL(file)
-      
-      // Web Audio APIでは duration は loadAudio 時に取得されるため、
-      // ここでは仮の値を設定
-      const musicFile = {
-        file,
-        url,
-        name: file.name,
-        duration: 0, // Web Audio Manager で実際の値が設定される
+  const handleFile = useCallback(
+    async (file: File) => {
+      if (!file.type.startsWith("audio/")) {
+        alert("音楽ファイルを選択してください")
+        return
       }
 
-      await setCurrentMusic(musicFile)
-      navigate({ to: '/player' })
-    } catch (error) {
-      console.error('Failed to load music file:', error)
-      alert('音楽ファイルの読み込みに失敗しました')
-    }
-  }, [setCurrentMusic, navigate])
+      try {
+        const url = URL.createObjectURL(file)
 
-  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault()
-    setIsDragOver(false)
-    
-    const files = Array.from(e.dataTransfer.files)
-    if (files.length > 0) {
-      handleFile(files[0])
-    }
-  }, [handleFile])
+        // Web Audio APIでは duration は loadAudio 時に取得されるため、
+        // ここでは仮の値を設定
+        const musicFile = {
+          file,
+          url,
+          name: file.name,
+          duration: 0, // Web Audio Manager で実際の値が設定される
+        }
+
+        await setCurrentMusic(musicFile)
+        navigate({ to: "/player" })
+      } catch (error) {
+        console.error("Failed to load music file:", error)
+        alert("音楽ファイルの読み込みに失敗しました")
+      }
+    },
+    [setCurrentMusic, navigate],
+  )
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault()
+      setIsDragOver(false)
+
+      const files = Array.from(e.dataTransfer.files)
+      if (files.length > 0) {
+        handleFile(files[0])
+      }
+    },
+    [handleFile],
+  )
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault()
@@ -55,12 +61,15 @@ const Home = () => {
     setIsDragOver(false)
   }, [])
 
-  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    if (files && files.length > 0) {
-      handleFile(files[0])
-    }
-  }, [handleFile])
+  const handleFileInput = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files
+      if (files && files.length > 0) {
+        handleFile(files[0])
+      }
+    },
+    [handleFile],
+  )
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center p-6">
@@ -77,23 +86,26 @@ const Home = () => {
           </p>
         </div>
 
-        <Card 
+        <Card
           className={`
             transition-all duration-300 ease-in-out cursor-pointer
-            ${isDragOver 
-              ? 'border-primary bg-primary/5 scale-105 shadow-lg' 
-              : 'border-dashed border-muted-foreground/30 hover:border-primary/50 hover:bg-accent/5'
+            ${
+              isDragOver
+                ? "border-primary bg-primary/5 scale-105 shadow-lg"
+                : "border-dashed border-muted-foreground/30 hover:border-primary/50 hover:bg-accent/5"
             }
           `}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
-          onClick={() => document.getElementById('file-input')?.click()}
+          onClick={() => document.getElementById("file-input")?.click()}
         >
           <CardContent className="flex flex-col items-center justify-center py-16 px-8">
-            <Upload className={`h-16 w-16 mb-6 transition-colors ${isDragOver ? 'text-primary' : 'text-muted-foreground'}`} />
+            <Upload
+              className={`h-16 w-16 mb-6 transition-colors ${isDragOver ? "text-primary" : "text-muted-foreground"}`}
+            />
             <h3 className="text-xl font-semibold mb-2">
-              {isDragOver ? '音楽ファイルをドロップ' : '音楽ファイルを選択'}
+              {isDragOver ? "音楽ファイルをドロップ" : "音楽ファイルを選択"}
             </h3>
             <p className="text-muted-foreground text-center mb-4">
               MP3, WAV, M4A, OGG などの音楽ファイルをサポート
@@ -121,6 +133,6 @@ const Home = () => {
   )
 }
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute("/")({
   component: Home,
 })
