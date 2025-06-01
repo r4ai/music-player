@@ -63,6 +63,7 @@
     "zod": "^3.25.45"
   },
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@tanstack/router-plugin": "^1.120.13",
     "@tauri-apps/cli": "^2",
     "@types/node": "^22.15.29",

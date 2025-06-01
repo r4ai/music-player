@@ -15,6 +15,7 @@
 ## Tech Stack
 
 - **Framework**: Tauri
+- **Package Manager**: Bun
 - **Frontend**:
   - **Language**: TypeScript
   - **UI Library**: React
