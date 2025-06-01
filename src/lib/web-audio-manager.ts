@@ -120,10 +120,14 @@ export class WebAudioManager {
       throw audioError
     }
   }
-
   public play = async () => {
     if (!this.audioContext || !this.audioBuffer) {
       throw new Error('Audio is not loaded')
+    }
+
+    // If already playing, do nothing
+    if (this.isPlaying) {
+      return
     }
 
     // Resume AudioContext if suspended (required for user interaction)
@@ -131,8 +135,12 @@ export class WebAudioManager {
       await this.audioContext.resume()
     }
 
-    // Stop current playback if any
-    this.stop()
+    // Stop current playback only if there's an active source node
+    if (this.sourceNode) {
+      this.sourceNode.stop()
+      this.sourceNode.disconnect()
+      this.sourceNode = null
+    }
 
     // Create new source node
     this.sourceNode = this.audioContext.createBufferSource()
@@ -147,7 +155,7 @@ export class WebAudioManager {
       }
     }
 
-    // Start playback
+    // Start playback from the paused position
     this.sourceNode.start(0, this.pauseTime)
     this.startTime = this.audioContext.currentTime - this.pauseTime
     this.isPlaying = true
