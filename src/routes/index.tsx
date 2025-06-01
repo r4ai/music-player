@@ -15,22 +15,24 @@ const Home = () => {
       return
     }
 
-    const url = URL.createObjectURL(file)
-    const audio = new Audio(url)
-    
-    const duration = await new Promise<number>((resolve) => {
-      audio.onloadedmetadata = () => resolve(audio.duration)
-    })
+    try {
+      const url = URL.createObjectURL(file)
+      
+      // Web Audio APIでは duration は loadAudio 時に取得されるため、
+      // ここでは仮の値を設定
+      const musicFile = {
+        file,
+        url,
+        name: file.name,
+        duration: 0, // Web Audio Manager で実際の値が設定される
+      }
 
-    const musicFile = {
-      file,
-      url,
-      name: file.name,
-      duration,
+      await setCurrentMusic(musicFile)
+      navigate({ to: '/player' })
+    } catch (error) {
+      console.error('Failed to load music file:', error)
+      alert('音楽ファイルの読み込みに失敗しました')
     }
-
-    setCurrentMusic(musicFile)
-    navigate({ to: '/player' })
   }, [setCurrentMusic, navigate])
 
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {

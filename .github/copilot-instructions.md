@@ -40,6 +40,22 @@
   const handleClick = () => "clicked";
   ```
 
+- interfaceよりtypeを使う
+
+  ```ts
+  // NG
+  interface User {
+    name: string;
+    age: number;
+  }
+
+  // OK
+  type User = {
+    name: string;
+    age: number;
+  };
+  ```
+
 - shadcn/uiのコンポーネントを利用する
 
   コンポーネント一覧：

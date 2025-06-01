@@ -1,53 +1,46 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card'
 import { Button } from '../../components/ui/button'
 import { Slider } from '../../components/ui/slider'
 import { useMusicContext } from '../../contexts/music-context'
-import { Play, Pause, Volume2, VolumeX, SkipBack, ArrowLeft, Music } from 'lucide-react'
+import { Play, Pause, Volume2, VolumeX, SkipBack, ArrowLeft, Music, Loader2, AlertCircle } from 'lucide-react'
+import { Alert, AlertDescription } from '../../components/ui/alert'
 
 const Player = () => {
   const {
     currentMusic,
     isPlaying,
     currentTime,
+    duration,
     volume,
-    audioRef,
+    isLoading,
+    error,
     togglePlay,
     setVolume,
     seekTo,
   } = useMusicContext()
   const navigate = useNavigate()
-  const [duration, setDuration] = useState(0)
 
   useEffect(() => {
     if (!currentMusic) {
       navigate({ to: '/' })
-      return
     }
-
-    const audio = audioRef.current
-    if (!audio) return
-
-    audio.src = currentMusic.url
-    audio.volume = volume
-
-    const updateDuration = () => {
-      setDuration(audio.duration || 0)
-    }
-
-    audio.addEventListener('loadedmetadata', updateDuration)
-
-    return () => {
-      audio.removeEventListener('loadedmetadata', updateDuration)
-    }
-  }, [currentMusic, navigate, audioRef, volume])
+  }, [currentMusic, navigate])
 
   const formatTime = (seconds: number) => {
     if (isNaN(seconds)) return '0:00'
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
     return `${mins}:${secs.toString().padStart(2, '0')}`
+  }
+
+  const handleTogglePlay = async () => {
+    try {
+      await togglePlay()
+    } catch (err) {
+      console.error('Playback error:', err)
+    }
   }
 
   const handleProgressChange = (value: number[]) => {
@@ -85,18 +78,29 @@ const Player = () => {
           <CardHeader className="text-center pb-6">
             <div className="flex items-center justify-center mb-4">
               <div className="w-24 h-24 bg-gradient-to-br from-primary to-accent rounded-full flex items-center justify-center">
-                <Music className="h-12 w-12 text-white" />
+                {isLoading ? (
+                  <Loader2 className="h-12 w-12 text-white animate-spin" />
+                ) : (
+                  <Music className="h-12 w-12 text-white" />
+                )}
               </div>
             </div>
             <CardTitle className="text-2xl font-bold truncate">
               {currentMusic.name.replace(/\.[^/.]+$/, '')}
             </CardTitle>
             <p className="text-muted-foreground">
-              {isPlaying ? '再生中' : '一時停止中'}
+              {isLoading ? '読み込み中...' : isPlaying ? '再生中' : '一時停止中'}
             </p>
           </CardHeader>
 
           <CardContent className="space-y-6">
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
             {/* 進捗バー */}
             <div className="space-y-2">
               <Slider
@@ -105,6 +109,7 @@ const Player = () => {
                 step={1}
                 onValueChange={handleProgressChange}
                 className="w-full"
+                disabled={isLoading}
               />
               <div className="flex justify-between text-sm text-muted-foreground">
                 <span>{formatTime(currentTime)}</span>
@@ -119,6 +124,7 @@ const Player = () => {
                 size="icon"
                 className="h-12 w-12"
                 onClick={() => seekTo(0)}
+                disabled={isLoading}
               >
                 <SkipBack className="h-5 w-5" />
               </Button>
@@ -126,9 +132,12 @@ const Player = () => {
               <Button
                 size="icon"
                 className="h-16 w-16 bg-primary hover:bg-primary/90"
-                onClick={togglePlay}
+                onClick={handleTogglePlay}
+                disabled={isLoading}
               >
-                {isPlaying ? (
+                {isLoading ? (
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                ) : isPlaying ? (
                   <Pause className="h-8 w-8" />
                 ) : (
                   <Play className="h-8 w-8 ml-1" />
@@ -153,6 +162,7 @@ const Player = () => {
                   step={1}
                   onValueChange={handleVolumeChange}
                   className="flex-1"
+                  disabled={isLoading}
                 />
                 <span className="text-sm text-muted-foreground min-w-[3ch]">
                   {Math.round(volume * 100)}%
