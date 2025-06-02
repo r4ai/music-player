@@ -66,6 +66,16 @@ bun run check:write && bun run typecheck && bun run test:ci
   const handleClick = () => "clicked";
   ```
 
+- importのパスの指定には`@/`を積極的に利用する
+
+  ```ts
+  // NG
+  import { MyComponent } from "../../components/my-component";
+
+  // OK
+  import { MyComponent } from "@/components/my-component";
+  ```
+
 - interfaceよりtypeを使う
 
   ```ts

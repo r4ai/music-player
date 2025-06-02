@@ -1,0 +1,6 @@
+export { Equalizer } from "./equalizer"
+export { MainPlayer } from "./main-player"
+export { Player } from "./player"
+export { PlayerControls } from "./player-controls"
+export { PlayerProgressBar } from "./player-progress-bar"
+export { PlayerVolumeControls } from "./player-volume-controls"

@@ -1,10 +1,10 @@
-import { Sliders } from "lucide-react"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Slider } from "@/components/ui/slider"
 import {
   type EqualizerBands,
   useAudioPlayer,
-} from "../contexts/audio-player-context"
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
-import { Slider } from "./ui/slider"
+} from "@/contexts/audio-player-context"
+import { Sliders } from "lucide-react"
 
 const EQ_BANDS: { key: keyof EqualizerBands; label: string; freq: string }[] = [
   { key: 400, label: "低音", freq: "400Hz" },
@@ -38,7 +38,10 @@ export const Equalizer = () => {
       <CardContent className="space-y-6">
         <div className="grid grid-cols-5 gap-4">
           {EQ_BANDS.map(({ key, label, freq }) => (
-            <div key={key} className="flex flex-col items-center space-y-3">
+            <div
+              key={String(key)}
+              className="flex flex-col items-center space-y-3"
+            >
               <div className="text-center">
                 <div className="text-sm font-medium">{label}</div>
                 <div className="text-xs text-muted-foreground">{freq}</div>
@@ -54,7 +57,9 @@ export const Equalizer = () => {
                   min={-20}
                   max={20}
                   step={0.5}
-                  onValueChange={(value) => handleBandChange(key, value)}
+                  onValueChange={(value: number[]) =>
+                    handleBandChange(key, value)
+                  }
                   className="h-28 w-4"
                   disabled={!loaded}
                 />
