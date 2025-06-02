@@ -11,21 +11,27 @@ const PlayerPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 to-accent/5 flex items-center justify-center p-6">
-      <div className="w-full max-w-4xl space-y-6">
-        <div className="mb-6">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-primary/5">
+      {/* ヘッダー */}
+      <div className="fixed top-0 left-0 right-0 z-10 backdrop-blur-xl bg-background/80 border-b border-border/50">
+        <div className="container mx-auto px-6 py-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={handleGoBack}
-            className="mb-4 hover:bg-accent"
+            className="hover:bg-accent/20 transition-all duration-200"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             ホームに戻る
           </Button>
         </div>
+      </div>
 
-        <Player />
+      {/* メインコンテンツ */}
+      <div className="pt-20 pb-8 px-6">
+        <div className="container mx-auto flex items-center justify-center min-h-[calc(100vh-7rem)]">
+          <Player />
+        </div>
       </div>
     </div>
   )

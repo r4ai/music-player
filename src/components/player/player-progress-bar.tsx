@@ -13,18 +13,26 @@ export const PlayerProgressBar = ({ formatTime }: PlayerProgressBarProps) => {
   }
 
   return (
-    <div className="space-y-2">
-      <Slider
-        value={[currentTime]}
-        max={duration || 100}
-        step={1}
-        onValueChange={handleProgressChange}
-        className="w-full"
-        disabled={!loaded}
-      />
-      <div className="flex justify-between text-sm text-muted-foreground">
-        <span>{formatTime(currentTime)}</span>
-        <span>{formatTime(duration)}</span>
+    <div className="space-y-3">
+      {/* プログレスバー */}
+      <div className="relative">
+        <Slider
+          value={[currentTime]}
+          max={duration}
+          onValueChange={handleProgressChange}
+          className="w-full [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2 [&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_[role=slider]]:shadow-md [&_[role=slider]]:transition-all [&_[role=slider]]:hover:scale-110"
+          disabled={!loaded}
+        />
+      </div>
+
+      {/* 時間表示 */}
+      <div className="flex justify-between items-center text-sm">
+        <span className="text-muted-foreground font-medium tabular-nums">
+          {formatTime(currentTime)}
+        </span>
+        <span className="text-muted-foreground/60 font-medium tabular-nums">
+          {formatTime(duration)}
+        </span>
       </div>
     </div>
   )

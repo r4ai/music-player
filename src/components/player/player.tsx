@@ -1,14 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card"
-import { useAudioPlayer } from "@/contexts/audio-player-context"
-import { Equalizer } from "./equalizer"
 import { MainPlayer } from "./main-player"
 import { PlayerControls } from "./player-controls"
 import { PlayerProgressBar } from "./player-progress-bar"
 import { PlayerVolumeControls } from "./player-volume-controls"
 
 export const Player = () => {
-  const { loaded } = useAudioPlayer()
-
   const formatTime = (seconds: number) => {
     if (Number.isNaN(seconds)) return "0:00"
     const mins = Math.floor(seconds / 60)
@@ -17,27 +13,29 @@ export const Player = () => {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-2">
-      {/* メインプレーヤー */}
-      <div className="space-y-6">
-        <MainPlayer />
+    <div className="w-full max-w-2xl mx-auto">
+      {/* モダンなカード型レイアウト - コンパクト版 */}
+      <Card className="backdrop-blur-xl bg-card/50 border-border/50 shadow-2xl overflow-hidden">
+        <div className="relative">
+          {/* 背景グラデーション */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-background to-accent/5" />
 
-        <Card className="shadow-xl border-primary/10">
-          <CardContent className="space-y-6 pt-6">
-            {/* 進捗バー */}
-            <PlayerProgressBar formatTime={formatTime} />
+          {/* メインコンテンツ - シングルカラム */}
+          <CardContent className="relative p-6 lg:p-8">
+            <div className="space-y-6">
+              {/* メインプレーヤーエリア */}
+              <MainPlayer />
 
-            {/* 再生コントロール */}
-            <PlayerControls />
-
-            {/* 音量・パンコントロール */}
-            <PlayerVolumeControls />
+              {/* プレーヤーコントロール統合エリア */}
+              <div className="space-y-4">
+                <PlayerProgressBar formatTime={formatTime} />
+                <PlayerControls />
+                <PlayerVolumeControls />
+              </div>
+            </div>
           </CardContent>
-        </Card>
-      </div>
-
-      {/* イコライザ */}
-      <Equalizer />
+        </div>
+      </Card>
     </div>
   )
 }
