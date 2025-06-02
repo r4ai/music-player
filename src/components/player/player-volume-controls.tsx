@@ -150,7 +150,7 @@ export const PlayerVolumeControls = () => {
         {/* イコライザボタン */}
         <Dialog>
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <DialogTrigger asChild>
                 <Button
                   variant="ghost"

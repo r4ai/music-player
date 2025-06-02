@@ -36,7 +36,7 @@ export const PlayerControls = () => {
         {/* メインコントロール */}
         <div className="flex items-center justify-center space-x-6">
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 variant="ghost"
                 size="icon"
@@ -52,7 +52,7 @@ export const PlayerControls = () => {
           </Tooltip>
 
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 variant="ghost"
                 size="icon"
@@ -70,7 +70,7 @@ export const PlayerControls = () => {
 
           {/* メイン再生ボタン */}
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 size="icon"
                 className="h-16 w-16 rounded-full bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
@@ -92,7 +92,7 @@ export const PlayerControls = () => {
           </Tooltip>
 
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 variant="ghost"
                 size="icon"
@@ -109,7 +109,7 @@ export const PlayerControls = () => {
           </Tooltip>
 
           <Tooltip>
-            <TooltipTrigger asChild>
+            <TooltipTrigger>
               <Button
                 variant="ghost"
                 size="icon"
