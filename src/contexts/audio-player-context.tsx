@@ -165,16 +165,45 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
 
   // actions
   const loadFile = async (file: File) => {
+    // Reset loaded state immediately
+    setLoaded(false)
+    setPlaying(false)
+    setCurrentTime(0)
+    setDuration(0)
+
     if (!audioRef.current) audioRef.current = new Audio()
-    else URL.revokeObjectURL(audioRef.current.src)
+    else {
+      URL.revokeObjectURL(audioRef.current.src)
+      // Remove any existing event listeners
+      audioRef.current.onloadedmetadata = null
+    }
     const audio = audioRef.current
 
     // cleanup old graph
     sourceRef.current?.disconnect()
 
+    // Set up event handler BEFORE setting src
+    audio.onloadedmetadata = () => {
+      setDuration(audio.duration)
+      setLoaded(true)
+      seek(0)
+    }
+
+    // Set audio source
     audio.src = URL.createObjectURL(file)
     audio.preload = "auto"
 
+    // Force load and check if metadata is already available
+    audio.load()
+
+    // If metadata is already loaded (e.g., very small file or cached), handle it immediately
+    if (audio.readyState >= 1) {
+      setDuration(audio.duration)
+      setLoaded(true)
+      seek(0)
+    }
+
+    // Parse metadata
     const { common } = await parseBlob(file)
     setMetadata({
       title:
@@ -186,12 +215,7 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
       trackNumber: common.track.no ?? 0,
     })
 
-    audio.onloadedmetadata = () => {
-      setDuration(audio.duration)
-      setLoaded(true)
-      seek(0)
-    }
-
+    // Create new audio source and build graph
     const ctx = ctxRef.current
     if (!ctx) {
       throw new Error("AudioContext is not initialized")
@@ -238,7 +262,6 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
   }
 
   // event listeners on demand
-  // biome-ignore lint/correctness/useExhaustiveDependencies: subscribe to audio events when loaded
   useEffect(() => {
     console.log("Audio player loaded:", loaded)
     const audio = audioRef.current
