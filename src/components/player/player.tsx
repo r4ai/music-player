@@ -16,10 +16,6 @@ export const Player = () => {
     return `${mins}:${secs.toString().padStart(2, "0")}`
   }
 
-  if (!loaded) {
-    return null
-  }
-
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* メインプレーヤー */}

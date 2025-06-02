@@ -1,20 +1,13 @@
 import { Player } from "@/components/player"
 import { Button } from "@/components/ui/button"
-import { useAudioPlayer } from "@/contexts/audio-player-context"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
 
 const PlayerPage = () => {
-  const { loaded } = useAudioPlayer()
   const navigate = useNavigate()
 
   const handleGoBack = () => {
     navigate({ to: "/" })
-  }
-
-  if (!loaded) {
-    console.error("Audio player is not loaded")
-    return null
   }
 
   return (
