@@ -150,7 +150,8 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
 
     const { common } = await parseBlob(file)
     setMetadata({
-      title: common.title ?? "Unknown Title",
+      title:
+        common.title ?? file.name.replace(/\.[^/.]+$/, "") ?? "Unknown Title",
       artist: common.artist ?? "Unknown Artist",
       album: common.album ?? "Unknown Album",
       year: common.year ?? 0,
@@ -238,6 +239,7 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
     <MusicPlayerContext.Provider
       value={{
         loaded,
+        metadata,
         playing,
         duration,
         currentTime,
