@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useAudioPlayer } from "@/contexts/audio-player-context"
@@ -31,12 +30,12 @@ export const PlayerControls = () => {
   }
 
   return (
-    <TooltipProvider>
+    <>
       <div className="space-y-6">
         {/* メインコントロール */}
         <div className="flex items-center justify-center space-x-6">
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
@@ -52,7 +51,7 @@ export const PlayerControls = () => {
           </Tooltip>
 
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
@@ -70,7 +69,7 @@ export const PlayerControls = () => {
 
           {/* メイン再生ボタン */}
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 size="icon"
                 className="h-16 w-16 rounded-full bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105"
@@ -92,7 +91,7 @@ export const PlayerControls = () => {
           </Tooltip>
 
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
@@ -109,7 +108,7 @@ export const PlayerControls = () => {
           </Tooltip>
 
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
@@ -125,6 +124,6 @@ export const PlayerControls = () => {
           </Tooltip>
         </div>
       </div>
-    </TooltipProvider>
+    </>
   )
 }

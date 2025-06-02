@@ -15,7 +15,6 @@ import { Slider } from "@/components/ui/slider"
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useAudioPlayer } from "@/contexts/audio-player-context"
@@ -46,12 +45,12 @@ export const PlayerVolumeControls = () => {
   const VolumeIcon = getVolumeIcon()
 
   return (
-    <TooltipProvider>
+    <>
       <div className="flex items-center justify-center space-x-6">
         {/* 音量コントロール */}
         <div className="flex items-center space-x-3">
           <Tooltip>
-            <TooltipTrigger>
+            <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
@@ -85,7 +84,7 @@ export const PlayerVolumeControls = () => {
 
         {/* 左右バランス（Pan）コントロール */}
         <Popover>
-          <PopoverTrigger>
+          <PopoverTrigger asChild>
             <Button
               size="sm"
               variant="ghost"
@@ -149,23 +148,16 @@ export const PlayerVolumeControls = () => {
 
         {/* イコライザボタン */}
         <Dialog>
-          <Tooltip>
-            <TooltipTrigger>
-              <DialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-10 w-10 rounded-full hover:bg-accent/20 transition-all duration-200"
-                  disabled={!loaded}
-                >
-                  <Sliders className="h-5 w-5" />
-                </Button>
-              </DialogTrigger>
-            </TooltipTrigger>
-            <TooltipContent>
-              <p>イコライザ</p>
-            </TooltipContent>
-          </Tooltip>
+          <DialogTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-full hover:bg-accent/20 transition-all duration-200"
+              disabled={!loaded}
+            >
+              <Sliders className="h-5 w-5" />
+            </Button>
+          </DialogTrigger>
 
           <DialogContent className="max-w-2xl">
             <DialogHeader>
@@ -180,6 +172,6 @@ export const PlayerVolumeControls = () => {
           </DialogContent>
         </Dialog>
       </div>
-    </TooltipProvider>
+    </>
   )
 }

@@ -240,6 +240,7 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
   // event listeners on demand
   // biome-ignore lint/correctness/useExhaustiveDependencies: subscribe to audio events when loaded
   useEffect(() => {
+    console.log("Audio player loaded:", loaded)
     const audio = audioRef.current
     if (!audio) return
     const timeUpdate = () => setCurrentTime(audio.currentTime)
