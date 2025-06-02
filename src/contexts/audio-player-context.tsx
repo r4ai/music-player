@@ -17,6 +17,14 @@ export type AudioMetadata = {
   trackNumber: number
 }
 
+export type EqualizerBands = {
+  400: number
+  1000: number
+  2500: number
+  6300: number
+  16000: number
+}
+
 export type AudioPlayerContextType = {
   // state
   loaded: boolean
@@ -26,9 +34,7 @@ export type AudioPlayerContextType = {
   currentTime: number
   volume: number
   pan: number
-  bass: number
-  mid: number
-  treble: number
+  equalizer: EqualizerBands
 
   // actions
   loadFile: (file: File) => Promise<void>
@@ -38,9 +44,7 @@ export type AudioPlayerContextType = {
   seek: (time: number) => void
   setVolume: (volume: number) => void
   setPan: (pan: number) => void
-  setBass: (freq: number) => void
-  setMid: (freq: number) => void
-  setTreble: (freq: number) => void
+  setEqualizerBand: (band: keyof EqualizerBands, gain: number) => void
 }
 
 const MusicPlayerContext = createContext<AudioPlayerContextType | undefined>(
@@ -67,9 +71,11 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
   const gainRef = useRef<GainNode | null>(null)
   const panRef = useRef<StereoPannerNode | null>(null)
   const eqRef = useRef<{
-    bass: BiquadFilterNode
-    mid: BiquadFilterNode
-    treble: BiquadFilterNode
+    400: BiquadFilterNode
+    1000: BiquadFilterNode
+    2500: BiquadFilterNode
+    6300: BiquadFilterNode
+    16000: BiquadFilterNode
   } | null>(null)
 
   // states
@@ -80,9 +86,13 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
   const [currentTime, setCurrentTime] = useState(0)
   const [volume, setVolume] = useState(1)
   const [pan, setPan] = useState(0)
-  const [bass, setBass] = useState(0)
-  const [mid, setMid] = useState(0)
-  const [treble, setTreble] = useState(0)
+  const [equalizer, setEqualizer] = useState<EqualizerBands>({
+    400: 0,
+    1000: 0,
+    2500: 0,
+    6300: 0,
+    16000: 0,
+  })
 
   // initialization
   useEffect(() => {
@@ -94,19 +104,34 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
     gainRef.current = ctxRef.current.createGain()
     panRef.current = ctxRef.current.createStereoPanner()
 
-    // EQ
+    // EQ with 5 bands
     const ctx = ctxRef.current
     eqRef.current = {
-      bass: ctx.createBiquadFilter(),
-      mid: ctx.createBiquadFilter(),
-      treble: ctx.createBiquadFilter(),
+      400: ctx.createBiquadFilter(),
+      1000: ctx.createBiquadFilter(),
+      2500: ctx.createBiquadFilter(),
+      6300: ctx.createBiquadFilter(),
+      16000: ctx.createBiquadFilter(),
     }
-    eqRef.current.bass.type = "lowshelf"
-    eqRef.current.mid.type = "peaking"
-    eqRef.current.treble.type = "highshelf"
-    eqRef.current.bass.frequency.value = 100
-    eqRef.current.mid.frequency.value = 1000
-    eqRef.current.treble.frequency.value = 6000
+
+    // Configure filter types and frequencies
+    eqRef.current[400].type = "lowshelf"
+    eqRef.current[400].frequency.value = 400
+
+    eqRef.current[1000].type = "peaking"
+    eqRef.current[1000].frequency.value = 1000
+    eqRef.current[1000].Q.value = 1
+
+    eqRef.current[2500].type = "peaking"
+    eqRef.current[2500].frequency.value = 2500
+    eqRef.current[2500].Q.value = 1
+
+    eqRef.current[6300].type = "peaking"
+    eqRef.current[6300].frequency.value = 6300
+    eqRef.current[6300].Q.value = 1
+
+    eqRef.current[16000].type = "highshelf"
+    eqRef.current[16000].frequency.value = 16000
   }, [])
 
   // helpers
@@ -130,9 +155,11 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
     sourceRef.current
       .connect(gainRef.current)
       .connect(panRef.current)
-      .connect(eqRef.current.bass)
-      .connect(eqRef.current.mid)
-      .connect(eqRef.current.treble)
+      .connect(eqRef.current[400])
+      .connect(eqRef.current[1000])
+      .connect(eqRef.current[2500])
+      .connect(eqRef.current[6300])
+      .connect(eqRef.current[16000])
       .connect(ctx.destination)
   }
 
@@ -182,6 +209,7 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
     await audioRef.current.play()
     setPlaying(true)
   }
+
   const pause = () => {
     if (!audioRef.current) {
       throw new Error("Audio element is not initialized")
@@ -189,6 +217,7 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
     audioRef.current.pause()
     setPlaying(false)
   }
+
   const stop = () => {
     if (!audioRef.current) {
       throw new Error("Audio element is not initialized")
@@ -197,10 +226,15 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
     audioRef.current.currentTime = 0
     setPlaying(false)
   }
+
   const seek = (time: number) => {
     if (!audioRef.current) return
     audioRef.current.currentTime = time
     setCurrentTime(time)
+  }
+
+  const setEqualizerBand = (band: keyof EqualizerBands, gain: number) => {
+    setEqualizer((prev) => ({ ...prev, [band]: gain }))
   }
 
   // event listeners on demand
@@ -222,18 +256,23 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
   useEffect(() => {
     if (gainRef.current) gainRef.current.gain.value = volume
   }, [volume])
+
   useEffect(() => {
     if (panRef.current) panRef.current.pan.value = pan
   }, [pan])
+
+  // Update equalizer bands
   useEffect(() => {
-    if (eqRef.current) eqRef.current.bass.gain.value = bass
-  }, [bass])
-  useEffect(() => {
-    if (eqRef.current) eqRef.current.mid.gain.value = mid
-  }, [mid])
-  useEffect(() => {
-    if (eqRef.current) eqRef.current.treble.gain.value = treble
-  }, [treble])
+    if (eqRef.current) {
+      for (const [band, gain] of Object.entries(equalizer)) {
+        const bandKey = Number(band) as keyof EqualizerBands
+        const filter = eqRef.current[bandKey]
+        if (filter) {
+          filter.gain.value = gain
+        }
+      }
+    }
+  }, [equalizer])
 
   return (
     <MusicPlayerContext.Provider
@@ -245,9 +284,7 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
         currentTime,
         volume,
         pan,
-        bass,
-        mid,
-        treble,
+        equalizer,
         loadFile,
         play,
         pause,
@@ -255,9 +292,7 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
         seek,
         setVolume,
         setPan,
-        setBass,
-        setMid,
-        setTreble,
+        setEqualizerBand,
       }}
     >
       {children}
