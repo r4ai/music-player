@@ -1,12 +1,12 @@
 import { Outlet, createRootRoute } from "@tanstack/react-router"
 import { TanStackRouterDevtools } from "@tanstack/react-router-devtools"
-import { MusicProvider } from "../contexts/music-context"
+import { AudioPlayerProvider } from "../contexts/audio-player-context"
 
 export const Route = createRootRoute({
   component: () => (
-    <MusicProvider>
+    <AudioPlayerProvider>
       <Outlet />
       <TanStackRouterDevtools />
-    </MusicProvider>
+    </AudioPlayerProvider>
   ),
 })

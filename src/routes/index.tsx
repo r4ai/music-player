@@ -1,12 +1,12 @@
+import { Card, CardContent } from "@/components/ui/card"
+import { useAudioPlayer } from "@/contexts/audio-player-context"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { Music, Upload } from "lucide-react"
 import { useCallback, useState } from "react"
-import { Card, CardContent } from "../components/ui/card"
-import { useMusicContext } from "../contexts/music-context"
 
 const Home = () => {
   const [isDragOver, setIsDragOver] = useState(false)
-  const { setCurrentMusic } = useMusicContext()
+  const { loadFile } = useAudioPlayer()
   const navigate = useNavigate()
 
   const handleFile = useCallback(
@@ -17,25 +17,17 @@ const Home = () => {
       }
 
       try {
-        const url = URL.createObjectURL(file)
-
-        // Web Audio APIでは duration は loadAudio 時に取得されるため、
-        // ここでは仮の値を設定
-        const musicFile = {
-          file,
-          url,
-          name: file.name,
-          duration: 0, // Web Audio Manager で実際の値が設定される
-        }
-
-        await setCurrentMusic(musicFile)
-        navigate({ to: "/player" })
+        console.log("Loading music file:", file.name)
+        await loadFile(file)
+        console.log("Music file loaded successfully:", file.name)
+        await navigate({ to: "/player" })
+        console.log("Navigated to player route")
       } catch (error) {
         console.error("Failed to load music file:", error)
         alert("音楽ファイルの読み込みに失敗しました")
       }
     },
-    [setCurrentMusic, navigate],
+    [loadFile, navigate],
   )
 
   const handleDrop = useCallback(
