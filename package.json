@@ -9,8 +9,10 @@
     "preview": "vite preview",
     "check": "biome check .",
     "check:write": "biome check --write .",
+    "typecheck": "tsc --noEmit",
     "tauri": "tauri",
     "test": "vitest",
+    "test:ci": "vitest --run",
     "test:ui": "vitest --ui"
   },
   "dependencies": {
