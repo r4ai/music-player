@@ -16,6 +16,7 @@
 
 - **Framework**: Tauri
 - **Package Manager**: Bun
+- **Linter**: Biome
 - **Frontend**:
   - **Language**: TypeScript
   - **UI Library**: React
