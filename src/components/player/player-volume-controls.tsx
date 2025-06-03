@@ -69,11 +69,11 @@ export const PlayerVolumeControls = () => {
           <div className="w-24">
             <Slider
               value={[volume * 100]}
-              max={100}
+              maxValue={100}
               step={1}
-              onValueChange={handleVolumeChange}
+              onChange={handleVolumeChange}
               className="[&_[role=slider]]:h-3 [&_[role=slider]]:w-3 [&_[role=slider]]:border-2 [&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_[role=slider]]:shadow-sm"
-              disabled={!loaded}
+              isDisabled={!loaded}
             />
           </div>
 
@@ -112,12 +112,12 @@ export const PlayerVolumeControls = () => {
                 </span>
                 <Slider
                   value={[pan * 100]}
-                  min={-100}
-                  max={100}
+                  minValue={-100}
+                  maxValue={100}
                   step={1}
-                  onValueChange={handlePanChange}
+                  onChange={handlePanChange}
                   className="flex-1 [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2 [&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_[role=slider]]:shadow-md"
-                  disabled={!loaded}
+                  isDisabled={!loaded}
                 />
                 <span className="text-sm text-muted-foreground font-medium min-w-[1rem]">
                   R

@@ -54,6 +54,16 @@ bun run check:write && bun run typecheck && bun run test:ci
   $ git commit -m "●●の機能を追加した"
   ```
 
+- プログラム内のコメントアウトは英語で記述する
+
+  ```ts
+  // OK
+  // This function handles the click event
+
+  // NG
+  // この関数はクリックイベントを処理します
+  ```
+
 - 関数にはアロー関数を使い、return文は省略する
 
   ```ts

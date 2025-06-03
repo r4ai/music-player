@@ -18,10 +18,10 @@ export const PlayerProgressBar = ({ formatTime }: PlayerProgressBarProps) => {
       <div className="relative">
         <Slider
           value={[currentTime]}
-          max={duration}
-          onValueChange={handleProgressChange}
+          maxValue={duration}
+          onChange={handleProgressChange}
           className="w-full [&_[role=slider]]:h-4 [&_[role=slider]]:w-4 [&_[role=slider]]:border-2 [&_[role=slider]]:border-primary [&_[role=slider]]:bg-background [&_[role=slider]]:shadow-md [&_[role=slider]]:transition-all [&_[role=slider]]:hover:scale-110"
-          disabled={!loaded}
+          isDisabled={!loaded}
         />
       </div>
 

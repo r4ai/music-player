@@ -46,14 +46,12 @@ export const Equalizer = () => {
               <Slider
                 orientation="vertical"
                 value={[equalizer[key]]}
-                min={-20}
-                max={20}
+                minValue={-20}
+                maxValue={20}
                 step={0.5}
-                onValueChange={(value: number[]) =>
-                  handleBandChange(key, value)
-                }
+                onChange={(value) => handleBandChange(key, value)}
                 className="h-28 w-4"
-                disabled={!loaded}
+                isDisabled={!loaded}
               />
             </div>
           </div>
