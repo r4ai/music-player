@@ -8,7 +8,13 @@ import ReactDOM from "react-dom/client"
 import { routeTree } from "./routeTree.gen"
 
 // Create a new router instance
-const router = createRouter({ routeTree })
+// `import.meta.env.BASE_URL` is set by Vite's `base` option and is used here to
+// ensure the router works correctly when deployed to a sub-path, such as
+// GitHub Pages.
+const router = createRouter({
+  routeTree,
+  basepath: import.meta.env.BASE_URL,
+})
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
