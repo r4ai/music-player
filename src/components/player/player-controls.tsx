@@ -1,10 +1,10 @@
-import { Button } from "@/components/ui/button"
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useAudioPlayer } from "@/contexts/audio-player-context"
+import { Button } from "@heroui/react"
 import {
   Loader2,
   Pause,

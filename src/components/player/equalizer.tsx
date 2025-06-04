@@ -1,9 +1,9 @@
-import { Button } from "@/components/ui/button"
 import { Slider } from "@/components/ui/slider"
 import {
   type EqualizerBands,
   useAudioPlayer,
 } from "@/contexts/audio-player-context"
+import { Button } from "@heroui/react"
 
 const EQ_BANDS: { key: keyof EqualizerBands; label: string; freq: string }[] = [
   { key: 400, label: "低音", freq: "400Hz" },

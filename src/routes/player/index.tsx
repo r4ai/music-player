@@ -1,5 +1,5 @@
 import { Player } from "@/components/player"
-import { Button } from "@/components/ui/button"
+import { Button } from "@heroui/react"
 import { createFileRoute, useNavigate } from "@tanstack/react-router"
 import { ArrowLeft } from "lucide-react"
 
