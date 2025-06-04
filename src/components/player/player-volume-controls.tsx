@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogContent,
@@ -18,6 +17,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { useAudioPlayer } from "@/contexts/audio-player-context"
+import { Button } from "@heroui/react"
 import { Sliders, Volume1, Volume2, VolumeX } from "lucide-react"
 import { Equalizer } from "./equalizer"
 
