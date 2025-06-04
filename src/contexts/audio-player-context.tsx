@@ -152,6 +152,16 @@ export const AudioPlayerProvider = ({ children }: AudioPlayerProviderProps) => {
     }
 
     const ctx = ctxRef.current
+
+    // Disconnect existing connections to avoid creating duplicate audio paths
+    gainRef.current.disconnect()
+    panRef.current.disconnect()
+    eqRef.current[400].disconnect()
+    eqRef.current[1000].disconnect()
+    eqRef.current[2500].disconnect()
+    eqRef.current[6300].disconnect()
+    eqRef.current[16000].disconnect()
+
     sourceRef.current
       .connect(gainRef.current)
       .connect(panRef.current)
