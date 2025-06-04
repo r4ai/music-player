@@ -1,6 +1,7 @@
-import { Slot } from "@radix-ui/react-slot"
+"use client"
+
+import { type ButtonProps, Button as HeroButton } from "@heroui/react"
 import { type VariantProps, cva } from "class-variance-authority"
-import * as React from "react"
 
 import { cn } from "@/lib/utils"
 
@@ -35,25 +36,16 @@ const buttonVariants = cva(
   },
 )
 
-const Button = React.forwardRef<
-  HTMLButtonElement,
-  React.ComponentProps<"button"> &
-    VariantProps<typeof buttonVariants> & {
-      asChild?: boolean
-    }
->(({ className, variant, size, asChild = false, ...props }, ref) => {
-  const Comp = asChild ? Slot : "button"
+type CustomButtonProps = Omit<ButtonProps, "className" | "size" | "variant"> &
+  VariantProps<typeof buttonVariants> & {
+    className?: string
+  }
 
-  return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      ref={ref}
-      {...props}
-    />
-  )
-})
-
-Button.displayName = "Button"
+const Button = ({ className, variant, size, ...props }: CustomButtonProps) => (
+  <HeroButton
+    className={cn(buttonVariants({ variant, size, className }))}
+    {...props}
+  />
+)
 
 export { Button, buttonVariants }
