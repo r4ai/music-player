@@ -20,7 +20,7 @@
 - **Frontend**:
   - **Language**: TypeScript
   - **UI Library**: React
-  - **Components**: shadcn/ui
+  - **Components**: shadcn/ui + React Aria
   - **Styling**: Tailwind CSS v4
   - **Routing**: TanStack Router
 - **Backend**:
